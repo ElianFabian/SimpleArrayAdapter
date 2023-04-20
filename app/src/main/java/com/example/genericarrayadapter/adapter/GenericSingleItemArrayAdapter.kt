@@ -98,28 +98,6 @@ private class GenericSingleItemArrayAdapter
 	}
 }
 
-private fun <ItemT : Any, VB : ViewBinding> defaultBind(item: ItemT, binding: VB)
-{
-	val textView: TextView? = when (val root = binding.root)
-	{
-		is TextView  -> root
-		is ViewGroup ->
-		{
-			val descendants = root.descendants
-
-			descendants.find { it is TextView && it.id != -1 } as? TextView ?: descendants.find { it is TextView } as? TextView
-		}
-
-		else         -> null
-	}
-
-	textView?.text = when (item)
-	{
-		is CharSequence -> item
-		else            -> "$item"
-	}
-}
-
 @Suppress("FunctionName")
 fun <ViewVB : ViewBinding> TextArrayAdapter(
 	context: Context,
