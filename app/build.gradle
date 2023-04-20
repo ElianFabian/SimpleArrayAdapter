@@ -1,0 +1,121 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.example.genericarrayadapter'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.genericarrayadapter"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+task generateViewBindingClasses {
+    def viewBindingSrcDir = "${project.buildDir}/generated/viewBinding"
+    def viewBindingOutputDir = "${project.projectDir}/src/main/java/com/example/genericarrayadapter/databinding"
+    outputs.dir viewBindingOutputDir
+    doLast {
+        project.file(viewBindingOutputDir).mkdirs()
+        bindingClasses.each { bindingClass ->
+            def bindingClassName = bindingClass.name.replace(".java", "")
+            def layoutName = bindingClassName.replace("Binding", "").toLowerCase()
+            def content = bindingClass.getText('UTF-8')
+            def packageName = content =~ /package (.+?);/ ? content =~ /package (.+?);/ : null
+            def packageStatement = packageName ? "package ${packageName[0][1]};" : ""
+            def companionObject = """
+                public static final class Companion {
+                    private Companion() {}
+
+                    public final int getLayoutId() {
+                        return R.layout.${layoutName};
+                    }
+
+                    public final ${bindingClassName} inflate(LayoutInflater inflater) {
+                        return ${bindingClassName}.inflate(inflater, R.layout.${layoutName}, null, false);
+                    }
+
+                    public final ${bindingClassName} bind(View view) {
+                        return ${bindingClassName}.bind(view);
+                    }
+                }
+            """
+            def newContent = content.replaceFirst(
+                    /public( final)? class ${bindingClassName}/,
+                    """
+                ${packageStatement}
+
+                public final class ${bindingClassName} {
+                    ${companionObject}
+                    private final ${layoutName}Binding binding;
+                    
+                    private ${bindingClassName}(${layoutName}Binding binding) {
+                        this.binding = binding;
+                    }
+
+                    public static ${bindingClassName} inflate(LayoutInflater inflater) {
+                        return inflate(inflater, null, false);
+                    }
+
+                    public static ${bindingClassName} inflate(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
+                        ${layoutName}Binding binding = ${layoutName}Binding.inflate(inflater, parent, attachToParent);
+                        return new ${bindingClassName}(binding);
+                    }
+
+                    public static ${bindingClassName} bind(View view) {
+                        ${layoutName}Binding binding = ${layoutName}Binding.bind(view);
+                        return new ${bindingClassName}(binding);
+                    }
+
+                    public ${layoutName}Binding getBinding() {
+                        return binding;
+                    }
+                }
+                public final class ${bindingClassName}.Companion {
+                    ${companionObject}
+                }
+                public static final ${bindingClassName}.Companion Companion = new ${bindingClassName}.Companion();
+                """
+            )
+            def outputFile = new File(viewBindingOutputDir, bindingClass.name)
+            outputFile.write(newContent, 'UTF-8')
+        }
+        def bindingClasses = fileTree(dir: viewBindingSrcDir, include: '**/*Binding.java')
+    }
+}
