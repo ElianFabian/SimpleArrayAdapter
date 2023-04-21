@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import androidx.core.view.descendants
 import androidx.viewbinding.ViewBinding
 import kotlin.reflect.KClass
 
@@ -395,7 +393,7 @@ data class BindingData<out ItemT : Any>(
 		item: @UnsafeVariance ItemT,
 		binding: ViewBinding,
 		position: Int,
-	) -> Unit = { item, binding, _ -> defaultBind(item, binding) },
+	) -> Unit = { item, binding, _ -> defaultArrayAdapterViewBinding(item, binding) },
 	val inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> ViewBinding)? = null,
 	val onBindDropDownView: (ArrayAdapter<@UnsafeVariance ItemT>.(
 		item: @UnsafeVariance ItemT,

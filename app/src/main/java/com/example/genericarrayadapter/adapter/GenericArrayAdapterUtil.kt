@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.core.view.descendants
 import androidx.viewbinding.ViewBinding
 
-internal fun <ItemT : Any, VB : ViewBinding> defaultBind(item: ItemT, binding: VB)
+internal fun <ItemT : Any, VB : ViewBinding> defaultArrayAdapterViewBinding(item: ItemT, binding: VB)
 {
 	val textView: TextView? = when (val root = binding.root)
 	{

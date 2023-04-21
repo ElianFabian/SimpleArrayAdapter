@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import androidx.annotation.ArrayRes
-import androidx.core.view.descendants
 import androidx.viewbinding.ViewBinding
 
 private class GenericSingleItemArrayAdapter
@@ -28,7 +26,7 @@ private class GenericSingleItemArrayAdapter
 		item: ItemT,
 		binding: ViewVB,
 		position: Int,
-	) -> Unit = { item, binding, _ -> defaultBind(item, binding) },
+	) -> Unit = { item, binding, _ -> defaultArrayAdapterViewBinding(item, binding) },
 ) : ArrayAdapter<@UnsafeVariance ItemT>(context, 0)
 {
 	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View
