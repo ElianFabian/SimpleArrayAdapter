@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.annotation.ArrayRes
 import androidx.viewbinding.ViewBinding
+import com.example.genericarrayadapter.databinding.ItemPhoneCodeBinding
+import com.example.genericarrayadapter.model.PhoneCodeInfo
 
 private class GenericSingleItemArrayAdapter
 <
@@ -100,7 +102,7 @@ private class GenericSingleItemArrayAdapter
 fun <ViewVB : ViewBinding> TextArrayAdapter(
 	context: Context,
 	inflateView: (LayoutInflater, ViewGroup, Boolean) -> ViewVB,
-): ArrayAdapter<String> = GenericSingleItemArrayAdapter<String, ViewVB, Nothing>(
+): ArrayAdapter<CharSequence> = GenericSingleItemArrayAdapter<CharSequence, ViewVB, Nothing>(
 	context = context,
 	inflateView = inflateView,
 )
