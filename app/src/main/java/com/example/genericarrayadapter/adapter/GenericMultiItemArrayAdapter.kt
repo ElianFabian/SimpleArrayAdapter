@@ -106,12 +106,12 @@ fun <ItemT : Any> GenericArrayAdapter(
 
 
 @Suppress("FunctionName")
-inline fun <reified ItemT : Any, VB : ViewBinding> Binding(
-	noinline inflateView: (LayoutInflater, ViewGroup, Boolean) -> VB,
-): BindingData<ItemT>
+fun <VB : ViewBinding> TextBinding(
+	inflateView: (LayoutInflater, ViewGroup, Boolean) -> VB,
+): BindingData<String>
 {
 	return BindingData(
-		itemClass = ItemT::class,
+		itemClass = String::class,
 		inflateView = inflateView,
 	)
 }

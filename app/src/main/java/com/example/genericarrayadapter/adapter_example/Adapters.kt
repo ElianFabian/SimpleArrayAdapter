@@ -3,6 +3,7 @@ package com.example.genericarrayadapter.adapter_example
 import android.content.Context
 import com.example.genericarrayadapter.adapter.Binding
 import com.example.genericarrayadapter.adapter.GenericArrayAdapter
+import com.example.genericarrayadapter.adapter.TextBinding
 import com.example.genericarrayadapter.databinding.ItemPhoneCodeBinding
 import com.example.genericarrayadapter.model.PhoneCodeInfo
 
@@ -45,7 +46,7 @@ fun PhoneCodeArrayAdapter2(context: Context) = GenericArrayAdapter(
 fun SomeArrayAdapter(context: Context) = GenericArrayAdapter(
 	context = context,
 	itemBindings = listOf(
-		Binding(ItemPhoneCodeBinding::inflate),
+		TextBinding(ItemPhoneCodeBinding::inflate),
 		Binding(ItemPhoneCodeBinding::inflate) { item: PhoneCodeInfo, binding ->
 
 		},
