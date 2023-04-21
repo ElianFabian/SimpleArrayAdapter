@@ -47,12 +47,26 @@ fun SomeArrayAdapter(context: Context) = GenericArrayAdapter(
 	itemBindings = listOf(
 		Binding(
 			inflateView = ItemPhoneCodeBinding::inflate,
-			onBindView = { item: PhoneCodeInfo, binding: ItemPhoneCodeBinding ->
+			onBindView = { item: ItemOne, binding ->
 
 			},
-			onBindDropDownView = { item: PhoneCodeInfo, binding: ItemPhoneCodeBinding ->
+			onBindDropDownView = { item: ItemOne, binding ->
+
+			},
+		),
+		Binding(
+			inflateView = ItemPhoneCodeBinding::inflate,
+			inflateDropDownView = ItemPhoneCodeBinding::inflate,
+			onBindView = { item: ItemTwo, binding ->
+
+			},
+			onBindDropDownView = { item: ItemTwo, binding ->
 
 			},
 		)
-	)
+	),
 )
+
+sealed class MultiItem
+data class ItemOne(val someValue: String) : MultiItem()
+data class ItemTwo(val someOtherValue: String) : MultiItem()

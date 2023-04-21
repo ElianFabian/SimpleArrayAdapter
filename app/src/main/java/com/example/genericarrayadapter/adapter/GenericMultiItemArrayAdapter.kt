@@ -8,10 +8,10 @@ import android.widget.ArrayAdapter
 import androidx.viewbinding.ViewBinding
 import kotlin.reflect.KClass
 
-class GenericMultiItemArrayAdapter<out ItemT : Any>(
+class GenericMultiItemArrayAdapter<ItemT : Any>(
 	context: Context,
 	itemBindings: List<BindingData<ItemT>>,
-) : ArrayAdapter<@UnsafeVariance ItemT>(context, 0)
+) : ArrayAdapter<ItemT>(context, 0)
 {
 	private val bindings = itemBindings.distinct()
 	private val itemClassToViewType = itemBindings.mapIndexed { index, data -> data.itemClass to index }.toMap()
@@ -274,7 +274,7 @@ inline fun <reified ItemT : Any, ViewVB : ViewBinding, DropDownViewVB : ViewBind
 		binding: ViewVB,
 		position: Int,
 	) -> Unit,
-	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> ViewBinding),
+	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> DropDownViewVB),
 	noinline onBindDropDownView: (ArrayAdapter<ItemT>.(
 		item: ItemT,
 		binding: DropDownViewVB,
@@ -306,7 +306,7 @@ inline fun <reified ItemT : Any, ViewVB : ViewBinding, DropDownViewVB : ViewBind
 		item: ItemT,
 		binding: ViewVB,
 	) -> Unit,
-	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> ViewBinding),
+	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> DropDownViewVB),
 	noinline onBindDropDownView: (ArrayAdapter<ItemT>.(
 		item: ItemT,
 		binding: DropDownViewVB,
@@ -334,7 +334,7 @@ inline fun <reified ItemT : Any, ViewVB : ViewBinding, DropDownViewVB : ViewBind
 		binding: ViewVB,
 		position: Int,
 	) -> Unit,
-	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> ViewBinding),
+	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> DropDownViewVB),
 	noinline onBindDropDownView: (ArrayAdapter<ItemT>.(
 		item: ItemT,
 		binding: DropDownViewVB,
@@ -363,7 +363,7 @@ inline fun <reified ItemT : Any, ViewVB : ViewBinding, DropDownViewVB : ViewBind
 		item: ItemT,
 		binding: ViewVB,
 	) -> Unit,
-	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> ViewBinding),
+	noinline inflateDropDownView: ((LayoutInflater, ViewGroup, Boolean) -> DropDownViewVB),
 	noinline onBindDropDownView: (ArrayAdapter<ItemT>.(
 		item: ItemT,
 		binding: DropDownViewVB,
