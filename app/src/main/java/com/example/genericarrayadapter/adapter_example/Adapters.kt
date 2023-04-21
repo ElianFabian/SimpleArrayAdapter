@@ -45,6 +45,10 @@ fun PhoneCodeArrayAdapter2(context: Context) = GenericArrayAdapter(
 fun SomeArrayAdapter(context: Context) = GenericArrayAdapter(
 	context = context,
 	itemBindings = listOf(
+		Binding(ItemPhoneCodeBinding::inflate),
+		Binding(ItemPhoneCodeBinding::inflate) { item: PhoneCodeInfo, binding ->
+
+		},
 		Binding(
 			inflateView = ItemPhoneCodeBinding::inflate,
 			onBindView = { item: ItemOne, binding ->
