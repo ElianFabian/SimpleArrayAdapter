@@ -1,9 +1,9 @@
 package com.example.simplearrayadapter.adapter_example
 
 import android.content.Context
-import com.example.simplearrayadapter.adapter.Binding
+import com.example.simplearrayadapter.adapter.bindingOf
 import com.example.simplearrayadapter.adapter.SimpleArrayAdapter
-import com.example.simplearrayadapter.adapter.TextBinding
+import com.example.simplearrayadapter.adapter.textBinding
 import com.example.simplearrayadapter.databinding.ItemPhoneCodeBinding
 import com.example.simplearrayadapter.model.PhoneCodeInfo
 
@@ -24,7 +24,6 @@ fun PhoneCodeArrayAdapter2(context: Context) = SimpleArrayAdapter(
 	context = context,
 	inflateView = ItemPhoneCodeBinding::inflate,
 	onBindView = { binding, item: PhoneCodeInfo, _ ->
-
 		binding.apply {
 			tvPhoneCode.text = item.phoneCode
 			tvCountryName.text = item.countryName
@@ -39,35 +38,35 @@ fun PhoneCodeArrayAdapter2(context: Context) = SimpleArrayAdapter(
 	},
 )
 
-@Suppress("FunctionName")
-fun SomeArrayAdapter(context: Context) = SimpleArrayAdapter(
-	context = context,
-	itemBindings = listOf(
-		TextBinding(ItemPhoneCodeBinding::inflate),
-		Binding(ItemPhoneCodeBinding::inflate) { binding, item: PhoneCodeInfo, _ ->
-
-		},
-		Binding(
-			inflateView = ItemPhoneCodeBinding::inflate,
-			onBindView = { binding, item: ItemOne, _ ->
-
-			},
-			onBindDropDownView = { binding, item: ItemOne, _ ->
-
-			},
-		),
-		Binding(
-			inflateView = ItemPhoneCodeBinding::inflate,
-			inflateDropDownView = ItemPhoneCodeBinding::inflate,
-			onBindView = { binding, item: ItemTwo, _ ->
-
-			},
-			onBindDropDownView = { binding, item: ItemTwo, _ ->
-
-			},
-		),
-	),
-)
+//@Suppress("FunctionName")
+//fun SomeArrayAdapter(context: Context) = SimpleArrayAdapter(
+//	context = context,
+//	itemBindings = listOf(
+//		textBinding(ItemPhoneCodeBinding::inflate),
+//		bindingOf(ItemPhoneCodeBinding::inflate) { binding, item: PhoneCodeInfo, _ ->
+//
+//		},
+//		bindingOf(
+//			inflateView = ItemPhoneCodeBinding::inflate,
+//			onBindView = { binding, item: ItemOne, _ ->
+//
+//			},
+//			onBindDropDownView = { binding, item: ItemOne, _ ->
+//
+//			},
+//		),
+//		bindingOf(
+//			inflateView = ItemPhoneCodeBinding::inflate,
+//			inflateDropDownView = ItemPhoneCodeBinding::inflate,
+//			onBindView = { binding, item: ItemTwo, _ ->
+//
+//			},
+//			onBindDropDownView = { binding, item: ItemTwo, _ ->
+//
+//			},
+//		),
+//	),
+//)
 
 sealed class MultiItem
 data class ItemOne(val someValue: String) : MultiItem()

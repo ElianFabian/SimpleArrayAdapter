@@ -1,18 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E3F2FD"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/spinner"
+    <!--    <androidx.appcompat.widget.AppCompatSpinner-->
+    <!--        android:id="@+id/spinner"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="48dp"-->
+    <!--        android:layout_marginHorizontal="20dp"-->
+    <!--        android:layout_marginTop="15dp"-->
+    <!--        android:spinnerMode="dropdown"-->
+    <!--        tools:listitem="@layout/item_phone_code" />-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilCountrySelector"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="15dp"
-        android:spinnerMode="dropdown"
-        tools:listitem="@layout/item_phone_code" />
+        android:hint="Select a country">
+
+        <AutoCompleteTextView
+            android:id="@+id/actvCountrySelector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

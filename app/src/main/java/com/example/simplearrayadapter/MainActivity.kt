@@ -1,9 +1,19 @@
 package com.example.simplearrayadapter
 
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.simplearrayadapter.adapter.SimpleSingleItemArrayAdapter
 import com.example.simplearrayadapter.adapter_example.PhoneCodeArrayAdapter2
 import com.example.simplearrayadapter.databinding.ActivityMainBinding
+import com.example.simplearrayadapter.databinding.ItemPhoneCodeBinding
+import com.example.simplearrayadapter.derived.SimpleHintArrayAdapter
+import com.example.simplearrayadapter.derived.setHintAdapter
+import com.example.simplearrayadapter.derived.setOnItemSelectedListenerForHintAdapter
 import com.example.simplearrayadapter.model.PhoneCodeInfo
 
 class MainActivity : AppCompatActivity() {
@@ -22,11 +32,96 @@ class MainActivity : AppCompatActivity() {
 
 
 	private fun initUi() {
-		binding.spinner.adapter = PhoneCodeArrayAdapter2(applicationContext).apply()
-		{
+
+
+		val hintAdapter = HintAdapterExample(
+			context = applicationContext,
+			inflateView = ItemPhoneCodeBinding::inflate,
+			hint = PhoneCodeInfo("uwu", "OwO"),
+		).apply {
 			addAll(phoneCodeInfoList)
 		}
+
+		val arrayAdapter = PhoneCodeArrayAdapter(applicationContext).apply {
+			addAll(phoneCodeInfoList)
+		}
+
+//		binding.spinner.adapter = arrayAdapter
+//
+//		binding.spinner.setHintAdapter(hintAdapter)
+//
+//		binding.spinner.setOnItemSelectedListenerForHintAdapter { phone: PhoneCodeInfo, position ->
+//			Toast.makeText(applicationContext, "phone: $phone, position: $position", Toast.LENGTH_SHORT).show()
+//		}
+		
+		binding.actvCountrySelector.apply {
+			setAdapter(arrayAdapter)
+		}
 	}
+}
+
+class HintAdapterExample(
+	context: Context,
+	inflateView: (LayoutInflater, ViewGroup, Boolean) -> ItemPhoneCodeBinding,
+	hint: PhoneCodeInfo,
+) : SimpleHintArrayAdapter<ItemPhoneCodeBinding, PhoneCodeInfo>(
+	context = context,
+	inflateView = inflateView,
+	hint = hint,
+) {
+	override fun onBindView(binding: ItemPhoneCodeBinding, position: Int) {
+		binding.apply {
+			tvPhoneCode.text = getItemAt(position).phoneCode
+			tvCountryName.text = getItemAt(position).countryName
+		}
+	}
+}
+
+class PhoneCodeArrayAdapter(
+	context: Context,
+) : SimpleSingleItemArrayAdapter<ItemPhoneCodeBinding, PhoneCodeInfo>(
+	context = context,
+	inflateView = ItemPhoneCodeBinding::inflate,
+) {
+	override fun onBindView(binding: ItemPhoneCodeBinding, position: Int) {
+		binding.apply {
+			tvPhoneCode.text = getItem(position).phoneCode + "owo"
+			tvCountryName.text = getItem(position).countryName
+		}
+	}
+	
+	override fun onBindDropDownView(binding: ItemPhoneCodeBinding, position: Int) {
+		binding.apply {
+			tvPhoneCode.text = getItem(position).phoneCode + "uwu"
+			tvCountryName.text = getItem(position).countryName
+		}
+	}
+
+//	override fun getFilter(): Filter = phoneCodeFilter
+//	
+//	
+//	private val phoneCodeFilter = object : Filter() {
+//		override fun performFiltering(constraint: CharSequence?): FilterResults {
+//			
+//			val filteredList = phoneCodeInfoList.filter { phoneCodeInfo ->
+//				phoneCodeInfo.countryName.contains(constraint ?: "", ignoreCase = true)
+//					|| phoneCodeInfo.phoneCode.contains(constraint ?: "", ignoreCase = true)
+//			}
+//			
+//			return FilterResults().apply { 
+//				values = filteredList
+//				count = filteredList.size
+//			}
+//		}
+//		
+//		override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+//			results?.let { filterResults ->
+//				clear()
+//				addAll(filterResults.values as List<PhoneCodeInfo>)
+//				notifyDataSetChanged()
+//			}
+//		}
+//	}
 }
 
 

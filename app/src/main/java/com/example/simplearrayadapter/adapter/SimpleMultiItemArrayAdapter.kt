@@ -10,104 +10,58 @@ import androidx.core.view.descendants
 import androidx.viewbinding.ViewBinding
 import kotlin.reflect.KClass
 
-private class SimpleMultiItemArrayAdapter<ItemT : Any>(
+abstract class SimpleMultiItemArrayAdapter<ItemT : Any>(
 	context: Context,
 	itemBindings: List<BindingData<ItemT>>,
 ) : ArrayAdapter<ItemT>(context, 0) {
-
-	private val bindings = itemBindings.distinct()
+	
+	abstract val bindings: List<BindingData<ItemT>>
+	
+	
 	private val itemClassToViewType = itemBindings.mapIndexed { index, data -> data.itemClass to index }.toMap()
 
-
+	override fun getItem(position: Int): ItemT = super.getItem(position)!!
+	
+	fun getItemOrNull(position: Int): ItemT? = super.getItem(position)
+	
 	override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-
-		val layoutInflater = LayoutInflater.from(parent.context)
-
-		val viewType = getItemViewType(position)
-		val itemBindingData = bindings[viewType]
-		val binding = convertView?.tag as? ViewBinding ?: itemBindingData.inflateView(layoutInflater, parent, false)
-		val item = getItem(position)!!
-
-		itemBindingData.onBindView(this, binding, item, position)
-
+		
+		val inflater = LayoutInflater.from(parent.context)
+		
+		val item = getItem(position)
+		
+		val bindingData = bindings.first { it.itemClass.isInstance(item) }
+		
+		val binding = convertView?.tag as? ViewBinding
+			?: bindingData.inflateView(inflater, parent, false).apply { root.tag = this }
+		
+		bindingData.onBindView(this, binding, item, position)
+		
 		return binding.root
 	}
-
-	override fun getItemViewType(position: Int): Int {
-
-		val item = getItem(position)!!
-
-		return itemClassToViewType[item::class]!!
-	}
-
+	
 	override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-
-		val layoutInflater = LayoutInflater.from(parent.context)
-
-		val item = getItem(position)!!
-		val viewType = getItemViewType(position)
-		val itemBindingData = bindings[viewType]
-
-		val binding = if (itemBindingData.inflateDropDownView == null) {
-
-			val binding = convertView?.tag as? ViewBinding ?: itemBindingData.inflateView(layoutInflater, parent, false).apply { root.tag = this }
-
-			if (itemBindingData.onBindDropDownView != null) {
-
-				itemBindingData.onBindDropDownView.invoke(this, binding, item, position)
-
-				binding
-			}
-			else {
-				itemBindingData.onBindView(this, binding, item, position)
-
-				binding
-			}
-		}
-		else {
-			if (itemBindingData.onBindDropDownView != null) {
-				val binding = convertView?.tag as? ViewBinding ?: itemBindingData.inflateDropDownView.invoke(layoutInflater, parent, false).apply { root.tag = this }
-
-				itemBindingData.onBindDropDownView.invoke(this, binding, item, position)
-
-				binding
-			}
-			else {
-				val binding = convertView?.tag as? ViewBinding ?: itemBindingData.inflateView.invoke(layoutInflater, parent, false).apply { root.tag = this }
-
-				itemBindingData.onBindView(this, binding, item, position)
-
-				binding
-			}
-		}
-
+		
+		val inflater = LayoutInflater.from(parent.context)
+		
+		val item = getItem(position)
+		
+		val bindingData = bindings.first { it.itemClass.isInstance(item) }
+		
+		val binding = convertView?.tag as? ViewBinding
+			?: bindingData.inflateDropDownView?.invoke(inflater, parent, false)?.apply { root.tag = this }
+			?: bindingData.inflateView(inflater, parent, false).apply { root.tag = this }
+		
+		bindingData.onBindDropDownView?.invoke(this, binding, item, position)
+			?: bindingData.onBindView(this, binding, item, position)
+		
 		return binding.root
 	}
 }
 
 
-@Suppress("FunctionName")
-fun <ItemT : Any> SimpleArrayAdapter(
-	context: Context,
-	itemBindings: List<BindingData<ItemT>>,
-): ArrayAdapter<ItemT> = SimpleMultiItemArrayAdapter(
-	context = context,
-	itemBindings = itemBindings,
-)
-
-
-@Suppress("FunctionName")
-fun <VB : ViewBinding> TextBinding(
-	inflateView: (LayoutInflater, ViewGroup, Boolean) -> VB,
-): BindingData<String> {
-	return BindingData(
-		itemClass = String::class,
-		inflateView = inflateView,
-	)
-}
-
-@Suppress("FunctionName", "UNCHECKED_CAST")
-inline fun <VB : ViewBinding, reified ItemT : Any> Binding(
+@Suppress("UNCHECKED_CAST")
+inline fun <VB : ViewBinding, reified ItemT : Any> bindingOf(
 	noinline inflateView: (LayoutInflater, ViewGroup, Boolean) -> VB,
 	noinline onBindView: ArrayAdapter<ItemT>.(
 		binding: VB,
@@ -126,8 +80,8 @@ inline fun <VB : ViewBinding, reified ItemT : Any> Binding(
 	)
 }
 
-@Suppress("FunctionName", "UNCHECKED_CAST")
-inline fun <VB : ViewBinding, reified ItemT : Any> Binding(
+@Suppress("UNCHECKED_CAST")
+inline fun <VB : ViewBinding, reified ItemT : Any> bindingOf(
 	noinline inflateView: (LayoutInflater, ViewGroup, Boolean) -> VB,
 	noinline onBindView: ArrayAdapter<ItemT>.(
 		binding: VB,
@@ -156,8 +110,8 @@ inline fun <VB : ViewBinding, reified ItemT : Any> Binding(
 	)
 }
 
-@Suppress("FunctionName", "UNCHECKED_CAST")
-inline fun <ViewVB : ViewBinding, DropDownViewVB : ViewBinding, reified ItemT : Any> Binding(
+@Suppress("UNCHECKED_CAST")
+inline fun <ViewVB : ViewBinding, DropDownViewVB : ViewBinding, reified ItemT : Any> bindingOf(
 	noinline inflateView: (LayoutInflater, ViewGroup, Boolean) -> ViewVB,
 	noinline onBindView: ArrayAdapter<ItemT>.(
 		binding: ViewVB,
